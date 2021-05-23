@@ -21,100 +21,116 @@ class _HomePageState extends State<HomePage> {
   int _imageHeight = 0;
   int _imageWidth = 0;
   String _model = "";
+  bool _changeView = true;
 
   @override
   void initState() {
     super.initState();
   }
 
-  loadModel() async {
-    String res;
-    switch (_model) {
-      case yolo:
-        res = await Tflite.loadModel(
-          model: "assets/yolov2_tiny.tflite",
-          labels: "assets/yolov2_tiny.txt",
-        );
-        break;
-
-      case mobilenet:
-        res = await Tflite.loadModel(
-            model: "assets/mobilenet_v1_1.0_224.tflite",
-            labels: "assets/mobilenet_v1_1.0_224.txt");
-        break;
-
-      case posenet:
-        res = await Tflite.loadModel(
-            model: "assets/posenet_mv1_075_float_from_checkpoints.tflite");
-        break;
-
-      default:
-        res = await Tflite.loadModel(
-            model: "assets/ssd_mobilenet.tflite",
-            labels: "assets/ssd_mobilenet.txt");
-    }
-    print(res);
-  }
-
-  onSelect(model) {
-    setState(() {
-      _model = model;
-    });
-    loadModel();
-  }
-
-  setRecognitions(recognitions, imageHeight, imageWidth) {
-    setState(() {
-      _recognitions = recognitions;
-      _imageHeight = imageHeight;
-      _imageWidth = imageWidth;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     Size screen = MediaQuery.of(context).size;
     return Scaffold(
-      body: _model == ""
+      body: _changeView
           ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  RaisedButton(
-                    child: const Text(ssd),
-                    onPressed: () => onSelect(ssd),
+              child: ClipOval(
+                child: Material(
+                  color: Colors.amberAccent, // button color
+                  child: InkWell(
+                    splashColor: Colors.redAccent, // inkwell color
+                    child: SizedBox(
+                        width: 50, height: 50, child: Icon(Icons.camera)),
+                    onTap: () {
+                      onSelect(ssd);
+                      onChangeView();
+                    },
                   ),
-                  RaisedButton(
-                    child: const Text(yolo),
-                    onPressed: () => onSelect(yolo),
-                  ),
-                  RaisedButton(
-                    child: const Text(mobilenet),
-                    onPressed: () => onSelect(mobilenet),
-                  ),
-                  RaisedButton(
-                    child: const Text(posenet),
-                    onPressed: () => onSelect(posenet),
-                  ),
-                ],
+                ),
               ),
             )
           : Stack(
               children: [
-                Camera(
-                  widget.cameras,
-                  _model,
-                  setRecognitions,
+                Container(
+                  width: screen.width,
+                  height: screen.height - 200,
+                  child: Camera(
+                    widget.cameras,
+                    _model,
+                    setRecognitions,
+                  ),
                 ),
+                // Camera(
+                //   widget.cameras,
+                //   _model,
+                //   setRecognitions,
+                // ),
                 BndBox(
                     _recognitions == null ? [] : _recognitions,
                     math.max(_imageHeight, _imageWidth),
                     math.min(_imageHeight, _imageWidth),
-                    screen.height,
+                    screen.height - 200,
                     screen.width,
                     _model),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ClipOval(
+                      child: Material(
+                        color: Colors.redAccent, // button color
+                        child: InkWell(
+                          splashColor: Colors.amberAccent, // inkwell color
+                          child: SizedBox(
+                              width: 50,
+                              height: 50,
+                              child: Icon(Icons.arrow_back_ios_outlined)),
+                          onTap: () {
+                            onChangeView();
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
+    );
+  }
+
+  loadModel() async {
+    String res;
+    res = await Tflite.loadModel(
+        model: "assets/ssd_mobilenet.tflite",
+        labels: "assets/ssd_mobilenet.txt");
+    print(res);
+  }
+
+  onSelect(model) {
+    setState(
+      () {
+        _model = model;
+      },
+    );
+    loadModel();
+  }
+
+  onChangeView() {
+    setState(
+      () {
+        _changeView = !_changeView;
+        print(_changeView);
+      },
+    );
+  }
+
+  setRecognitions(recognitions, imageHeight, imageWidth) {
+    setState(
+      () {
+        _recognitions = recognitions;
+        _imageHeight = imageHeight;
+        _imageWidth = imageWidth;
+      },
     );
   }
 }

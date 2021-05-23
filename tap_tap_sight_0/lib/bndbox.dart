@@ -52,14 +52,14 @@ class BndBox extends StatelessWidget {
             padding: EdgeInsets.only(top: 5.0, left: 5.0),
             decoration: BoxDecoration(
               border: Border.all(
-                color: Color.fromRGBO(37, 213, 253, 1.0),
+                color: Colors.amberAccent,
                 width: 3.0,
               ),
             ),
             child: Text(
               "${re["detectedClass"]} ${(re["confidenceInClass"] * 100).toStringAsFixed(0)}%",
               style: TextStyle(
-                color: Color.fromRGBO(37, 213, 253, 1.0),
+                color: Colors.redAccent,
                 fontSize: 14.0,
                 fontWeight: FontWeight.bold,
               ),
@@ -81,7 +81,7 @@ class BndBox extends StatelessWidget {
           child: Text(
             "${re["label"]} ${(re["confidence"] * 100).toStringAsFixed(0)}%",
             style: TextStyle(
-              color: Color.fromRGBO(37, 213, 253, 1.0),
+              color: Colors.amberAccent,
               fontSize: 14.0,
               fontWeight: FontWeight.bold,
             ),
@@ -120,7 +120,7 @@ class BndBox extends StatelessWidget {
               child: Text(
                 "● ${k["part"]}",
                 style: TextStyle(
-                  color: Color.fromRGBO(37, 213, 253, 1.0),
+                  color: Colors.redAccent,
                   fontSize: 12.0,
                 ),
               ),

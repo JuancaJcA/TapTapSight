@@ -33,74 +33,45 @@ class _CameraState extends State<Camera> {
         widget.cameras[0],
         ResolutionPreset.high,
       );
-      controller.initialize().then((_) {
-        if (!mounted) {
-          return;
-        }
-        setState(() {});
-
-        controller.startImageStream((CameraImage img) {
-          if (!isDetecting) {
-            isDetecting = true;
-
-            int startTime = new DateTime.now().millisecondsSinceEpoch;
-
-            if (widget.model == mobilenet) {
-              Tflite.runModelOnFrame(
-                bytesList: img.planes.map((plane) {
-                  return plane.bytes;
-                }).toList(),
-                imageHeight: img.height,
-                imageWidth: img.width,
-                numResults: 2,
-              ).then((recognitions) {
-                int endTime = new DateTime.now().millisecondsSinceEpoch;
-                print("Detection took ${endTime - startTime}");
-
-                widget.setRecognitions(recognitions, img.height, img.width);
-
-                isDetecting = false;
-              });
-            } else if (widget.model == posenet) {
-              Tflite.runPoseNetOnFrame(
-                bytesList: img.planes.map((plane) {
-                  return plane.bytes;
-                }).toList(),
-                imageHeight: img.height,
-                imageWidth: img.width,
-                numResults: 2,
-              ).then((recognitions) {
-                int endTime = new DateTime.now().millisecondsSinceEpoch;
-                print("Detection took ${endTime - startTime}");
-
-                widget.setRecognitions(recognitions, img.height, img.width);
-
-                isDetecting = false;
-              });
-            } else {
-              Tflite.detectObjectOnFrame(
-                bytesList: img.planes.map((plane) {
-                  return plane.bytes;
-                }).toList(),
-                model: widget.model == yolo ? "YOLO" : "SSDMobileNet",
-                imageHeight: img.height,
-                imageWidth: img.width,
-                imageMean: widget.model == yolo ? 0 : 127.5,
-                imageStd: widget.model == yolo ? 255.0 : 127.5,
-                numResultsPerClass: 1,
-                threshold: widget.model == yolo ? 0.2 : 0.4,
-              ).then((recognitions) {
-                int endTime = new DateTime.now().millisecondsSinceEpoch;
-                print("Detection took ${endTime - startTime}");
-
-                widget.setRecognitions(recognitions, img.height, img.width);
-
-                isDetecting = false;
-              });
-            }
+      controller.initialize().then(
+        (_) {
+          if (!mounted) {
+            return;
           }
-        });
-      });
+          setState(() {});
+
+          controller.startImageStream(
+            (CameraImage img) {
+              if (!isDetecting) {
+                isDetecting = true;
+
+                int startTime = new DateTime.now().millisecondsSinceEpoch;
+
+                Tflite.detectObjectOnFrame(
+                  bytesList: img.planes.map((plane) {
+                    return plane.bytes;
+                  }).toList(),
+                  model: widget.model == yolo ? "YOLO" : "SSDMobileNet",
+                  imageHeight: img.height,
+                  imageWidth: img.width,
+                  imageMean: widget.model == yolo ? 0 : 127.5,
+                  imageStd: widget.model == yolo ? 255.0 : 127.5,
+                  numResultsPerClass: 1,
+                  threshold: widget.model == yolo ? 0.2 : 0.4,
+                ).then((recognitions) {
+                  int endTime = new DateTime.now().millisecondsSinceEpoch;
+                  print("Detection took ${endTime - startTime}");
+
+                  widget.setRecognitions(recognitions, img.height, img.width);
+
+                  isDetecting = false;
+                });
+                // }
+              }
+            },
+          );
+        },
+      );
     }
   }
 
