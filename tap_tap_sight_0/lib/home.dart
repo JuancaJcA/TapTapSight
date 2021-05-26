@@ -22,6 +22,7 @@ class _HomePageState extends State<HomePage> {
   int _imageWidth = 0;
   String _model = "";
   bool _changeView = true;
+  bool _buttonTap = false;
 
   @override
   void initState() {
@@ -71,11 +72,12 @@ class _HomePageState extends State<HomePage> {
                     math.min(_imageHeight, _imageWidth),
                     screen.height - 200,
                     screen.width,
-                    _model),
+                    _model,
+                    _buttonTap),
                 Align(
                   alignment: Alignment.bottomCenter,
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(25.0),
                     child: ClipOval(
                       child: Material(
                         color: Colors.redAccent, // button color
@@ -87,6 +89,37 @@ class _HomePageState extends State<HomePage> {
                               child: Icon(Icons.arrow_back_ios_outlined)),
                           onTap: () {
                             onChangeView();
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: Padding(
+                    padding: const EdgeInsets.all(25.0),
+                    child: ClipOval(
+                      child: Material(
+                        color: Colors.amberAccent, // button color
+                        child: InkWell(
+                          splashColor: Colors.amberAccent, // inkwell color
+                          child: SizedBox(
+                              width: 50,
+                              height: 50,
+                              child: Icon(Icons.speaker_phone_sharp)),
+                          onTap: () {
+                            onChangeButton();
+                            for (var i = 0; i < _recognitions.length; i++) {
+                              String txt = "";
+                              var detectedTxt =
+                                  _recognitions[i]["detectedClass"];
+                              var detectedConf =
+                                  _recognitions[i]["confidenceInClass"];
+                              txt += detectedTxt.toString() +
+                                  detectedConf.toString();
+                              print(txt);
+                            }
                           },
                         ),
                       ),
@@ -120,6 +153,14 @@ class _HomePageState extends State<HomePage> {
       () {
         _changeView = !_changeView;
         print(_changeView);
+      },
+    );
+  }
+
+  onChangeButton() {
+    setState(
+      () {
+        _buttonTap = !_buttonTap;
       },
     );
   }

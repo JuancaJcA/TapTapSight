@@ -9,9 +9,10 @@ class BndBox extends StatelessWidget {
   final double screenH;
   final double screenW;
   final String model;
+  final bool buttonTap;
 
   BndBox(this.results, this.previewH, this.previewW, this.screenH, this.screenW,
-      this.model);
+      this.model, this.buttonTap);
 
   @override
   Widget build(BuildContext context) {
@@ -69,8 +70,16 @@ class BndBox extends StatelessWidget {
       }).toList();
     }
 
-    List<Widget> _renderStrings() {
+    List<Widget> _renderStrings(buttonTap) {
       double offset = -10;
+      String value(
+        var label,
+        var confidence,
+      ) {
+        String txt = "$label ${(confidence * 100).toStringAsFixed(0)}%";
+        return txt;
+      }
+
       return results.map((re) {
         offset = offset + 14;
         return Positioned(
@@ -79,7 +88,7 @@ class BndBox extends StatelessWidget {
           width: screenW,
           height: screenH,
           child: Text(
-            "${re["label"]} ${(re["confidence"] * 100).toStringAsFixed(0)}%",
+            value(re["label"], re["confidence"]),
             style: TextStyle(
               color: Colors.amberAccent,
               fontSize: 14.0,
@@ -134,9 +143,17 @@ class BndBox extends StatelessWidget {
       return lists;
     }
 
+    // return Stack(
+    //   children: model == mobilenet
+    //       ? _renderStrings()
+    //       : model == posenet
+    //           ? _renderKeypoints()
+    //           : _renderBoxes(),
+    // );
+
     return Stack(
       children: model == mobilenet
-          ? _renderStrings()
+          ? _renderStrings(buttonTap)
           : model == posenet
               ? _renderKeypoints()
               : _renderBoxes(),
