@@ -1,3 +1,5 @@
+import 'package:translator/translator.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:tflite/tflite.dart';
@@ -23,10 +25,22 @@ class _HomePageState extends State<HomePage> {
   String _model = "";
   bool _changeView = true;
   bool _buttonTap = false;
+  FlutterTts flutterTts = FlutterTts();
 
   @override
   void initState() {
     super.initState();
+  }
+
+  Future _speak(String txt) async {
+    await flutterTts.setLanguage("es-ES");
+    await flutterTts.setSpeechRate(1.0);
+    await flutterTts.setVolume(1.0);
+    await flutterTts.setPitch(1.0);
+
+    GoogleTranslator translator = GoogleTranslator();
+    var result = await translator.translate(txt, from: 'en', to: 'es');
+    await flutterTts.speak(result.toString());
   }
 
   @override
@@ -110,6 +124,7 @@ class _HomePageState extends State<HomePage> {
                               child: Icon(Icons.speaker_phone_sharp)),
                           onTap: () {
                             onChangeButton();
+                            String textSpeech = "";
                             for (var i = 0; i < _recognitions.length; i++) {
                               String txt = "";
                               var detectedTxt =
@@ -119,7 +134,12 @@ class _HomePageState extends State<HomePage> {
                               txt += detectedTxt.toString() +
                                   detectedConf.toString();
                               print(txt);
+                              if (detectedConf > 0.50) {
+                                textSpeech +=
+                                    _recognitions[i]["detectedClass"] + ",";
+                              }
                             }
+                            _speak(textSpeech);
                           },
                         ),
                       ),
