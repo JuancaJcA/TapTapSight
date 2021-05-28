@@ -51,11 +51,14 @@ class _HomePageState extends State<HomePage> {
           ? Center(
               child: ClipOval(
                 child: Material(
-                  color: Colors.amberAccent, // button color
+                  color: Colors.white, // button color
                   child: InkWell(
                     splashColor: Colors.redAccent, // inkwell color
                     child: SizedBox(
-                        width: 50, height: 50, child: Icon(Icons.camera)),
+                        width: 50,
+                        height: 50,
+                        child: Icon(Icons.camera,color: Colors.black54 )
+                    ),
                     onTap: () {
                       onSelect(ssd);
                       onChangeView();
