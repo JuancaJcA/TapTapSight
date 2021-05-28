@@ -8,6 +8,7 @@ import 'dart:math' as math;
 import 'camera.dart';
 import 'bndbox.dart';
 import 'models.dart';
+import 'package:flutter/services.dart';
 
 class HomePage extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -53,13 +54,16 @@ class _HomePageState extends State<HomePage> {
                 child: Material(
                   color: Colors.white, // button color
                   child: InkWell(
-                    splashColor: Colors.redAccent, // inkwell color
+                    splashColor: Color(0xFF96939F), // inkwell color
+                    highlightColor:Colors.white.withOpacity(.3),
+                    borderRadius: BorderRadius.circular(30),
                     child: SizedBox(
                         width: 50,
                         height: 50,
-                        child: Icon(Icons.camera,color: Colors.black54 )
+                        child: Icon(Icons.camera,color: Colors.black54),
                     ),
                     onTap: () {
+                      HapticFeedback.mediumImpact();
                       onSelect(ssd);
                       onChangeView();
                     },
@@ -97,14 +101,16 @@ class _HomePageState extends State<HomePage> {
                     padding: const EdgeInsets.all(25.0),
                     child: ClipOval(
                       child: Material(
-                        color: Colors.redAccent, // button color
+                        color:Color(0xFF227B81),
                         child: InkWell(
-                          splashColor: Colors.amberAccent, // inkwell color
+                          splashColor: Color(0xFF154D51),
+                          borderRadius: BorderRadius.circular(30),
                           child: SizedBox(
                               width: 50,
                               height: 50,
                               child: Icon(Icons.arrow_back_ios_outlined)),
                           onTap: () {
+                            HapticFeedback.mediumImpact();
                             onChangeView();
                           },
                         ),
@@ -118,14 +124,17 @@ class _HomePageState extends State<HomePage> {
                     padding: const EdgeInsets.all(25.0),
                     child: ClipOval(
                       child: Material(
-                        color: Colors.amberAccent, // button color
+                        color: Color(0xFFD9BB6D), // button color
                         child: InkWell(
-                          splashColor: Colors.amberAccent, // inkwell color
+                          splashColor: Color(0xFFB28D2E),
+                          highlightColor:Colors.white.withOpacity(.5),
+                          borderRadius: BorderRadius.circular(30),
                           child: SizedBox(
                               width: 50,
                               height: 50,
                               child: Icon(Icons.speaker_phone_sharp)),
                           onTap: () {
+                            HapticFeedback.mediumImpact();
                             onChangeButton();
                             String textSpeech = "";
                             for (var i = 0; i < _recognitions.length; i++) {
